@@ -21,13 +21,16 @@ import demo.Main.*;
 public class Process extends AbstractActor {
 	final static boolean DEBUG = false;
 	final static double CRASH_PROBABILITY = 0.1; // Probability of crashing, alpha
-	
+	final static int boundOfProposedNumber = 5; // Bound of the proposed number
+	final static int ABORT_TIMEOUT = 100; // Timeout for abort
+
 	private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	private int id, N;
 	private ActorRef[] actors;
 	private boolean launched = false, shouldCrash = false, crashed = false, hold = false, decided = false;
 
 	private int ballot, proposal, readBallot, imposeBallot, estimate;
+	private int maxAbortBallot = Integer.MIN_VALUE;
 	private Pair[] states;
 
 	private int receivedStates = 0;
@@ -148,7 +151,7 @@ public class Process extends AbstractActor {
 			this.launched = true;
 			startTime = System.currentTimeMillis();
 			Random rand = new Random();
-			int proposedNumber = rand.nextInt(2);
+			int proposedNumber = rand.nextInt(boundOfProposedNumber);
 
 			// Propose a value
 			propose(proposedNumber);
@@ -214,14 +217,15 @@ public class Process extends AbstractActor {
 			if (!hold) { // Propose Again
 				// schedule for 100 ms later
 				getContext().getSystem().scheduler().scheduleOnce(
-					java.time.Duration.ofMillis(100),
+					java.time.Duration.ofMillis(ABORT_TIMEOUT),
 					getSelf(),
 					new LaunchMessage(),
 					getContext().getSystem().dispatcher(),
 					getSelf()
 				);
-				if (!decided)
+				if (!decided && m.ballot > maxAbortBallot) {
 					propose(proposal);
+				}
 			}
 		}
 	}
@@ -316,7 +320,8 @@ public class Process extends AbstractActor {
 			if (ACKnum > N/2 && !ACKconfirmed) {
 				ACKconfirmed = true;
 				endTime = System.currentTimeMillis();
-				log.info("Total time for the Process ["+id+"] to decide: " + (endTime - startTime) + "ms with value ["+proposal+"] ballot ["+ballot+"]");
+				decided = true;
+				log.info("****Total time for the Process ["+id+"] to decide: " + (endTime - startTime) + "ms with value ["+proposal+"] ballot ["+ballot+"]");
 				for (int i = 0; i < N; i++) {
 					actors[i].tell(new DecideMessage(proposal), getSelf());
 				}
@@ -326,9 +331,6 @@ public class Process extends AbstractActor {
 
 	public void receiveDecideMessage (DecideMessage m) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received DECIDE message from ["+ getSender().path().name() +"] with proposal ["+m.proposal+"]");
-		}
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
@@ -340,9 +342,10 @@ public class Process extends AbstractActor {
 		}
 		if (!crashed) {
 			proposeResult = m.proposal;
-			// this.decided = true;
-			// log.info("["+getSelf().path().name()+"] decided on value ["+proposeResult+"] while ballot is ["+ballot+"]");
-
+			this.decided = true;
+		}
+		if (DEBUG) {
+			log.info("****["+getSelf().path().name()+"] received DECIDE message from ["+ getSender().path().name() +"] with proposal ["+proposeResult+"]");
 		}
 	}
 
