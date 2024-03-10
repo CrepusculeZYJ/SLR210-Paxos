@@ -18,9 +18,9 @@ import java.util.ArrayList;
  * @brief Main class of the project, which serves as a sender to send messages to the actors
 */
 public class Main {
-	final static int N = 10; // Number of actors
+	final static int N = 7; // Number of actors
 	final static int LEADER_ELECTION_TIMEOUT = 1000; // Timeout for leader election, t_le
-	final static int CRASH_NUMBER = 4; // Number of actors to crash
+	final static int CRASH_NUMBER = 2; // Number of actors to crash
     public static void main (String[] args) {
         
         final ActorSystem system = ActorSystem.create("system");

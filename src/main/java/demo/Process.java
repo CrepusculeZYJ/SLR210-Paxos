@@ -25,7 +25,7 @@ public class Process extends AbstractActor {
 	private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	private int id, N;
 	private ActorRef[] actors;
-	private boolean launched = false, shouldCrash = false, crashed = false, hold = false;
+	private boolean launched = false, shouldCrash = false, crashed = false, hold = false, decided = false;
 
 	private int ballot, proposal, readBallot, imposeBallot, estimate;
 	private Pair[] states;
@@ -94,9 +94,6 @@ public class Process extends AbstractActor {
 	*/
 	void propose (int v) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] proposed value ["+v+"]");
-		}
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
@@ -116,6 +113,9 @@ public class Process extends AbstractActor {
 			ReadMessage readMessage = new ReadMessage(ballot);
 			for (int i = 0; i < N; i++) {
 				actors[i].tell(readMessage, getSelf());
+			}
+			if (DEBUG) {
+				log.info("["+getSelf().path().name()+"] proposed value ["+v+"] with ballot ["+(ballot)+"]");
 			}
 		}
 	}
@@ -170,10 +170,10 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveReadMessage (ReadMessage m) {
+		if (crashed) return;
 		if (DEBUG) {
 			log.info("["+getSelf().path().name()+"] received READ message from ["+ getSender().path().name() +"] with ballot ["+m.ballot+"]");
 		}
-		if (crashed) return;
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
@@ -196,10 +196,10 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveAbortMessage (AbortMessage m) {
+		if (crashed) return;
 		if (DEBUG) {
 			log.info("["+getSelf().path().name()+"] received ABORT message from ["+ getSender().path().name() +"] with ballot ["+m.ballot+"]");
 		}
-		if (crashed) return;
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
@@ -212,16 +212,25 @@ public class Process extends AbstractActor {
 		if (!crashed) {
 			proposeResult = -1;
 			if (!hold) { // Propose Again
-				propose(proposal);
+				// schedule for 100 ms later
+				getContext().getSystem().scheduler().scheduleOnce(
+					java.time.Duration.ofMillis(100),
+					getSelf(),
+					new LaunchMessage(),
+					getContext().getSystem().dispatcher(),
+					getSelf()
+				);
+				if (!decided)
+					propose(proposal);
 			}
 		}
 	}
 
 	public void receiveGatherMessage (GatherMessage m) {
+		if (crashed) return;
 		if (DEBUG) {
 			log.info("["+getSelf().path().name()+"] received GATHER message from ["+ getSender().path().name() +"] with ballot ["+m.ballot+"] and imposeBallot ["+m.imposeBallot+"] and estimate ["+m.estimate+"]");
 		}
-		if (crashed) return;
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
@@ -261,10 +270,10 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveImposeMessage (ImposeMessage m) {
+		if (crashed) return;
 		if (DEBUG) {
 			log.info("["+getSelf().path().name()+"] received IMPOSE message from ["+ getSender().path().name() +"] with ballot ["+m.ballot+"] and proposal ["+m.proposal+"]");
 		}
-		if (crashed) return;
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
@@ -288,10 +297,10 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveACKMessage (ACKMessage m) {
+		if (crashed) return;
 		if (DEBUG) {
 			log.info("["+getSelf().path().name()+"] received ACK message from ["+ getSender().path().name() +"] with ballot ["+m.ballot+"]");
 		}
-		if (crashed) return;
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
@@ -307,7 +316,7 @@ public class Process extends AbstractActor {
 			if (ACKnum > N/2 && !ACKconfirmed) {
 				ACKconfirmed = true;
 				endTime = System.currentTimeMillis();
-				log.info("Total time for the Process ["+id+"] to decide: " + (endTime - startTime) + "ms");
+				log.info("Total time for the Process ["+id+"] to decide: " + (endTime - startTime) + "ms with value ["+proposal+"] ballot ["+ballot+"]");
 				for (int i = 0; i < N; i++) {
 					actors[i].tell(new DecideMessage(proposal), getSelf());
 				}
@@ -316,10 +325,10 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveDecideMessage (DecideMessage m) {
+		if (crashed) return;
 		if (DEBUG) {
 			log.info("["+getSelf().path().name()+"] received DECIDE message from ["+ getSender().path().name() +"] with proposal ["+m.proposal+"]");
 		}
-		if (crashed) return;
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
@@ -331,6 +340,9 @@ public class Process extends AbstractActor {
 		}
 		if (!crashed) {
 			proposeResult = m.proposal;
+			// this.decided = true;
+			// log.info("["+getSelf().path().name()+"] decided on value ["+proposeResult+"] while ballot is ["+ballot+"]");
+
 		}
 	}
 
