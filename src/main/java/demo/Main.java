@@ -19,9 +19,9 @@ import java.util.ArrayList;
 */
 public class Main {
 
-	final static int N = 10; // Number of actors
+	final static int N = 100; // Number of actors
 	final static int LEADER_ELECTION_TIMEOUT = 1000; // Timeout for leader election, t_le
-	final static int CRASH_NUMBER = 2; // Number of actors to crash
+	final static int CRASH_NUMBER = 49; // Number of actors to crash
 
     public static void main (String[] args) {
         
