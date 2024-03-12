@@ -1,9 +1,15 @@
 @echo
 
 call mvn clean
+del logs\*.txt
+del summary.txt
 
 call mvn compile
 
-call mvn exec:exec > log.txt
+call mvn exec:exec > logs/log.txt
 
-pause
+call python process.py
+
+summary.txt
+
+@REM pause
