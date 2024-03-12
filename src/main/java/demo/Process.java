@@ -19,7 +19,7 @@ import demo.Main.*;
  * @brief Class representing the actor
 */
 public class Process extends AbstractActor {
-	final static double CRASH_PROBABILITY = 0.1; // Probability of crashing, alpha
+	final static double CRASH_PROBABILITY = 1; // Probability of crashing, alpha
 	final static int boundOfProposedNumber = 2; // Bound of the proposed number (exclusive)
 	final static int ABORT_TIMEOUT = 100; // Timeout for abort
 
@@ -282,7 +282,7 @@ public class Process extends AbstractActor {
 				ACKconfirmed = true;
 				endTime = System.currentTimeMillis();
 				decided = true;
-				log.info("⚠️ Total time for the Process ["+id+"] to decide (value ["+proposal+"] ballot ["+ballot+"]): " + (endTime - startTime) + "ms");
+				log.info("/!\\ Total time for the Process ["+id+"] to decide (value ["+proposal+"] ballot ["+ballot+"]): " + (endTime - startTime) + "ms");
 				for (int i = 0; i < N; i++) {
 					actors[i].tell(new DecideMessage(proposal), getSelf());
 				}
@@ -303,7 +303,7 @@ public class Process extends AbstractActor {
 			proposeResult = m.proposal;
 			this.decided = true;
 		}
-		log.info("⚠️ ["+getSelf().path().name()+"] received DECIDE from ["+ getSender().path().name() +"], proposal ["+proposeResult+"]");
+		log.info("/!\\ ["+getSelf().path().name()+"] received DECIDE from ["+ getSender().path().name() +"], proposal ["+proposeResult+"]");
 	}
 
 	public class Pair {
