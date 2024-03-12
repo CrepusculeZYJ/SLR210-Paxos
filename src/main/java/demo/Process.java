@@ -19,7 +19,7 @@ import demo.Main.*;
  * @brief Class representing the actor
 */
 public class Process extends AbstractActor {
-	final static double CRASH_PROBABILITY = 1; // Probability of crashing, alpha
+	final static double CRASH_PROBABILITY = 0.1; // Probability of crashing, alpha
 	final static int boundOfProposedNumber = 2; // Bound of the proposed number (exclusive)
 	final static int ABORT_TIMEOUT = 100; // Timeout for abort
 

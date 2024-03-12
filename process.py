@@ -67,7 +67,8 @@ with open(info_output_path, 'w') as info_file, open(debug_output_path, 'w') as d
             # 更新INFO条目的计数
             if line.startswith('[INFO]'):
                 info_count += 1
-    for node_line in sorted(node_info):
-        summary_file.write(node_info[node_line])
     if concurrency == False:
         summary_file.write(f"**************[CONCURRENCY ERREOR]*************\n")
+    for node_line in sorted(node_info):
+        summary_file.write(node_info[node_line])
+
