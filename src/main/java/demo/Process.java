@@ -19,9 +19,8 @@ import demo.Main.*;
  * @brief Class representing the actor
 */
 public class Process extends AbstractActor {
-	final static boolean DEBUG = false;
-	final static double CRASH_PROBABILITY = 1; // Probability of crashing, alpha
-	final static int boundOfProposedNumber = 51; // Bound of the proposed number
+	final static double CRASH_PROBABILITY = 0.1; // Probability of crashing, alpha
+	final static int boundOfProposedNumber = 2; // Bound of the proposed number (exclusive)
 	final static int ABORT_TIMEOUT = 100; // Timeout for abort
 
 	private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
@@ -100,9 +99,7 @@ public class Process extends AbstractActor {
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
@@ -117,16 +114,12 @@ public class Process extends AbstractActor {
 			for (int i = 0; i < N; i++) {
 				actors[i].tell(readMessage, getSelf());
 			}
-			if (DEBUG) {
-				log.info("["+getSelf().path().name()+"] proposed (value ["+v+"], ballot ["+(ballot)+"])");
-			}
+			log.debug("["+getSelf().path().name()+"] proposed (value ["+v+"], ballot ["+(ballot)+"])");
 		}
 	}
 
 	public void receiveActorinfoMessage (ActorinfoMessage m) {
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received ACTORINFO from ["+ getSender().path().name() +"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received ACTORINFO from ["+ getSender().path().name() +"]");
 		this.actors = m.actors;
 		this.N = m.length;
 		ballot = id - N;
@@ -144,9 +137,7 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveLaunchMessage (LaunchMessage m) {
-		if (DEBUG && (getSelf().path().name() != getSender().path().name())) {
-			log.info("["+getSelf().path().name()+"] received LAUNCH from ["+ getSender().path().name() +"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received LAUNCH from ["+ getSender().path().name() +"]");
 		if (!this.launched) {
 			this.launched = true;
 			startTime = System.currentTimeMillis();
@@ -159,31 +150,23 @@ public class Process extends AbstractActor {
 	}
 
 	public void receiveCrashMessage (CrashMessage m) {
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received CRASH from ["+ getSender().path().name() +"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received CRASH from ["+ getSender().path().name() +"]");
 		this.shouldCrash = true;
 	}
 
 	public void receiveHoldMessage (HoldMessage m) {
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received HOLD from ["+ getSender().path().name() +"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received HOLD from ["+ getSender().path().name() +"]");
 		hold = true;
 	}
 
 	public void receiveReadMessage (ReadMessage m) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received READ from ["+ getSender().path().name() +"], ballot ["+m.ballot+"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received READ from ["+ getSender().path().name() +"], ballot ["+m.ballot+"]");
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
@@ -200,31 +183,19 @@ public class Process extends AbstractActor {
 
 	public void receiveAbortMessage (AbortMessage m) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received ABORT from ["+ getSender().path().name() +"], ballot ["+m.ballot+"], maxAbortBallot ["+maxAbortBallot+"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received ABORT from ["+ getSender().path().name() +"], ballot ["+m.ballot+"], maxAbortBallot ["+maxAbortBallot+"]");
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
 		if (!crashed) {
 			proposeResult = -1;
-			if (!hold) { // Propose Again
-				// schedule for 100 ms later
-				getContext().getSystem().scheduler().scheduleOnce(
-					java.time.Duration.ofMillis(ABORT_TIMEOUT),
-					getSelf(),
-					new LaunchMessage(),
-					getContext().getSystem().dispatcher(),
-					getSelf()
-				);
+			if (!hold) {
 				if (!decided && m.ballot > maxAbortBallot) {
-					if(DEBUG) log.info("["+getSelf().path().name()+"] RE-PROPOSE, ballot ["+m.ballot+"], maxAbortBallot ["+maxAbortBallot+"]");
+					log.debug("["+getSelf().path().name()+"] RE-PROPOSE, ballot ["+m.ballot+"], maxAbortBallot ["+maxAbortBallot+"]");
 					maxAbortBallot = m.ballot;
 					propose(proposal);
 				}
@@ -234,16 +205,12 @@ public class Process extends AbstractActor {
 
 	public void receiveGatherMessage (GatherMessage m) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received GATHER from ["+ getSender().path().name() +"], (ballot ["+m.ballot+"], imposeBallot ["+m.imposeBallot+"], estimate ["+m.estimate+"])");
-		}
+		log.debug("["+getSelf().path().name()+"] received GATHER from ["+ getSender().path().name() +"], (ballot ["+m.ballot+"], imposeBallot ["+m.imposeBallot+"], estimate ["+m.estimate+"])");
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
@@ -277,16 +244,12 @@ public class Process extends AbstractActor {
 
 	public void receiveImposeMessage (ImposeMessage m) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received IMPOSE from ["+ getSender().path().name() +"], (ballot ["+m.ballot+"], proposal ["+m.proposal+"])");
-		}
+		log.debug("["+getSelf().path().name()+"] received IMPOSE from ["+ getSender().path().name() +"], (ballot ["+m.ballot+"], proposal ["+m.proposal+"])");
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
@@ -304,16 +267,12 @@ public class Process extends AbstractActor {
 
 	public void receiveACKMessage (ACKMessage m) {
 		if (crashed) return;
-		if (DEBUG) {
-			log.info("["+getSelf().path().name()+"] received ACK from ["+ getSender().path().name() +"], ballot ["+m.ballot+"]");
-		}
+		log.debug("["+getSelf().path().name()+"] received ACK from ["+ getSender().path().name() +"], ballot ["+m.ballot+"]");
 		if (proposeResult >= 0) return;
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
@@ -336,9 +295,7 @@ public class Process extends AbstractActor {
 		if (shouldCrash) {
 			double r = Math.random();
 			if (r < CRASH_PROBABILITY) {
-				if (DEBUG) {
-					log.info("["+getSelf().path().name()+"] crashed");
-				}
+				log.debug("["+getSelf().path().name()+"] crashed");
 				crashed = true;
 			}
 		}
@@ -346,9 +303,7 @@ public class Process extends AbstractActor {
 			proposeResult = m.proposal;
 			this.decided = true;
 		}
-		if (DEBUG) {
-			log.info("⚠️ ["+getSelf().path().name()+"] received DECIDE from ["+ getSender().path().name() +"], proposal ["+proposeResult+"]");
-		}
+		log.info("⚠️ ["+getSelf().path().name()+"] received DECIDE from ["+ getSender().path().name() +"], proposal ["+proposeResult+"]");
 	}
 
 	public class Pair {
