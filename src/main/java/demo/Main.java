@@ -12,6 +12,9 @@ import java.util.concurrent.TimeUnit;
 import scala.concurrent.duration.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -20,13 +23,48 @@ import java.util.ArrayList;
 */
 public class Main {
 
-	final static int N = 100; // Number of actors
-	final static int LEADER_ELECTION_TIMEOUT = 1000; // Timeout for leader election, t_le
-	final static int CRASH_NUMBER = 49; // Number of actors to crash
+	static int N; // Number of actors
+	static int LEADER_ELECTION_TIMEOUT;// Timeout for leader election, t_le
+	static int CRASH_NUMBER; // Number of actors to crash
+	static double CRASH_PROBABILITY; // Probability of crashing, alpha
+	static int BOUND_OF_PROPOSED_NUMBER; // Bound of the proposed number (exclusive)
+	static int ABORT_TIMEOUT; // Timeout for abort
 	final static String FLAG = "DEBUG";
 
     public static void main (String[] args) {
-        
+
+		String paramFile = "param.txt";
+		try (BufferedReader reader = new BufferedReader(new FileReader(paramFile))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split("=");
+				if (parts.length == 2) {
+					switch(parts[0].trim()) {
+						case "N":
+							N = Integer.parseInt(parts[1].trim());
+							break;
+						case "LEADER_ELECTION_TIMEOUT":
+							LEADER_ELECTION_TIMEOUT = Integer.parseInt(parts[1].trim());
+							break;
+						case "CRASH_NUMBER":
+							CRASH_NUMBER = Integer.parseInt(parts[1].trim());
+							break;
+						case "CRASH_PROBABILITY":
+							CRASH_PROBABILITY = Double.parseDouble(parts[1].trim());
+							break;
+						case "BOUND_OF_PROPOSED_NUMBER":
+							BOUND_OF_PROPOSED_NUMBER = Integer.parseInt(parts[1].trim());
+							break;
+						case "ABORT_TIMEOUT":
+							ABORT_TIMEOUT = Integer.parseInt(parts[1].trim());
+							break;
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		        
         final ActorSystem system = ActorSystem.create("system");
 		final ActorRef[] actors = new ActorRef[N];
 
@@ -98,10 +136,16 @@ public class Main {
     static public class ActorinfoMessage {
 		public ActorRef[] actors;
 		public int length;
+		public double crashProbability;
+		public int boundOfProposedNumber;
+		public int abortTimeout;
 
 		public ActorinfoMessage(ActorRef[] actors) {
 			this.actors = actors;
 			this.length = actors.length;
+			this.crashProbability = CRASH_PROBABILITY;
+			this.boundOfProposedNumber = BOUND_OF_PROPOSED_NUMBER;
+			this.abortTimeout = ABORT_TIMEOUT;
 		}
 	}
 

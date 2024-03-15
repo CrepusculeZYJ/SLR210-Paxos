@@ -19,9 +19,9 @@ import demo.Main.*;
  * @brief Class representing the actor
 */
 public class Process extends AbstractActor {
-	final static double CRASH_PROBABILITY = 0.1; // Probability of crashing, alpha
-	final static int boundOfProposedNumber = 2; // Bound of the proposed number (exclusive)
-	final static int ABORT_TIMEOUT = 100; // Timeout for abort
+	static double CRASH_PROBABILITY; // Probability of crashing, alpha
+	static int BOUND_OF_PROPOSED_NUMBER; // Bound of the proposed number (exclusive)
+	static int ABORT_TIMEOUT; // Timeout for abort
 
 	private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 	private int id, N;
@@ -122,6 +122,9 @@ public class Process extends AbstractActor {
 		log.debug("["+getSelf().path().name()+"] received ACTORINFO from ["+ getSender().path().name() +"]");
 		this.actors = m.actors;
 		this.N = m.length;
+		this.CRASH_PROBABILITY = m.crashProbability;
+		this.BOUND_OF_PROPOSED_NUMBER = m.boundOfProposedNumber;
+		this.ABORT_TIMEOUT = m.abortTimeout;
 		ballot = id - N;
 		proposal = 0;
 		readBallot = 0;
@@ -142,7 +145,7 @@ public class Process extends AbstractActor {
 			this.launched = true;
 			startTime = System.currentTimeMillis();
 			Random rand = new Random();
-			int proposedNumber = rand.nextInt(boundOfProposedNumber);
+			int proposedNumber = rand.nextInt(BOUND_OF_PROPOSED_NUMBER);
 
 			// Propose a value
 			propose(proposedNumber);
