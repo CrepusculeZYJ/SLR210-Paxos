@@ -1,4 +1,4 @@
-Time for first process to decide: 4ms
+Time for first process to decide: 5ms
 **************[PARAM INFO]************
 N = 3
 LEADER_ELECTION_TIMEOUT = 100
@@ -9,4 +9,4 @@ ABORT_TIMEOUT = 100
 **************[NODE INFO]*************
 NODE	[1]	VALUE	[1]
 NODE	[2]	VALUE	[1]	TIME[5ms]
-NODE	[3]	VALUE	[1]	TIME[4ms]
+NODE	[3]	VALUE	[1]	TIME[5ms]

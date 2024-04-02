@@ -30,7 +30,7 @@ for key, value in loaded_data.items():
 for param, value in averages.items():
     averages[param] = sum(value) / len(value)
 
-for alpha in ['0', '0.1', '1']:
+for alpha in ['0', '0.1','0.5', '1']:
     # tle为x轴，N为不同的线
     plt.figure()
     plot_data = {}

@@ -11,12 +11,12 @@ set BOUND_OF_PROPOSED_NUMBER=2
 set ABORT_TIMEOUT=100
 
 REM 循环CRASH_PROBABILITY参数
-for %%a in (0, 0.1, 1) do (
+for %%a in (0, 0.1, 0.5, 1) do (
     REM 循环N参数
-    for %%b in (3, 10, 100) do (
+    for %%b in (3, 10, 50, 100) do (
+		REM 循环tle参数
         for %%c in (10, 50, 100, 500, 1000) do (
             REM 根据N的值设定CRASH_NUMBER的值
-            @REM if %%b==3 (set CRASH_NUMBER=1) else if %%b==10 (set CRASH_NUMBER=4) else if %%b==100 (set CRASH_NUMBER=49)
             set /a temp=%%b+1
             set /a CRASH_NUMBER=!temp!/2-1
 

@@ -1,0 +1,36 @@
+**************[CONCURRENCY ERREOR]*************
+Time for first process to decide: 86ms
+**************[PARAM INFO]************
+N = 50
+LEADER_ELECTION_TIMEOUT = 50
+CRASH_NUMBER = 24
+CRASH_PROBABILITY = 0.1
+BOUND_OF_PROPOSED_NUMBER = 2
+ABORT_TIMEOUT = 100
+**************[NODE INFO]*************
+NODE	[2]	VALUE	[1]	<------------------ uncheck
+NODE	[4]	VALUE	[1]	<------------------ uncheck
+NODE	[5]	VALUE	[1]	<------------------ uncheck
+NODE	[7]	VALUE	[1]	<------------------ uncheck
+NODE	[8]	VALUE	[1]	<------------------ uncheck
+NODE	[9]	VALUE	[1]	<------------------ uncheck
+NODE	[11]	VALUE	[1]	<------------------ uncheck
+NODE	[12]	VALUE	[1]	<------------------ uncheck
+NODE	[13]	VALUE	[1]	<------------------ uncheck
+NODE	[14]	VALUE	[1]	<------------------ uncheck
+NODE	[17]	VALUE	[1]	<------------------ uncheck
+NODE	[21]	VALUE	[1]	<------------------ uncheck
+NODE	[22]	VALUE	[1]	<------------------ uncheck
+NODE	[27]	VALUE	[1]	<------------------ uncheck
+NODE	[28]	VALUE	[1]	<------------------ uncheck
+NODE	[35]	VALUE	[1]	<------------------ uncheck
+NODE	[36]	VALUE	[1]	<------------------ uncheck
+NODE	[39]	VALUE	[1]	<------------------ uncheck
+NODE	[40]	VALUE	[1]	<------------------ uncheck
+NODE	[41]	VALUE	[1]	<------------------ uncheck
+NODE	[43]	VALUE	[1]	<------------------ uncheck
+NODE	[44]	VALUE	[1]	<------------------ uncheck
+NODE	[46]	VALUE	[1]	<------------------ uncheck
+NODE	[47]	VALUE	[1]	<------------------ uncheck
+NODE	[49]	VALUE	[1]	<------------------ uncheck
+NODE	[50]	VALUE	[1]	<------------------ uncheck
