@@ -50,6 +50,7 @@ for alpha in ['0', '0.1','0.5', '1']:
     for N, data in plot_data.items():
         plt.plot(data['tle'], data['value'], marker='o', label=f'N={N}')
     plt.xlabel('tle')
+    plt.ylim(0,300)
     plt.ylabel('time (ms)')
     plt.title('Time for the first process to decide, alpha=' + alpha)
     plt.legend()

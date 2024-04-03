@@ -1,7 +1,7 @@
 @echo off
 setlocal enableextensions
 
-del savedatas\*.pickle
+
 
 REM 循环执行run.bat五次
 for /L %%i in (1,1,5) do (

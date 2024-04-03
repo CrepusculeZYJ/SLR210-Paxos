@@ -1,4 +1,4 @@
-Time for first process to decide: 180ms
+Time for first process to decide: 230ms
 **************[PARAM INFO]************
 N = 100
 LEADER_ELECTION_TIMEOUT = 500
@@ -66,7 +66,7 @@ NODE	[56]	VALUE	[0]
 NODE	[57]	VALUE	[0]
 NODE	[58]	VALUE	[0]
 NODE	[59]	VALUE	[0]
-NODE	[60]	VALUE	[0]
+NODE	[60]	VALUE	[0]	TIME[230ms]
 NODE	[61]	VALUE	[0]
 NODE	[62]	VALUE	[0]
 NODE	[63]	VALUE	[0]
@@ -81,7 +81,7 @@ NODE	[71]	VALUE	[0]
 NODE	[72]	VALUE	[0]
 NODE	[73]	VALUE	[0]
 NODE	[74]	VALUE	[0]
-NODE	[75]	VALUE	[0]	TIME[196ms]
+NODE	[75]	VALUE	[0]
 NODE	[76]	VALUE	[0]
 NODE	[77]	VALUE	[0]
 NODE	[78]	VALUE	[0]
@@ -90,7 +90,7 @@ NODE	[80]	VALUE	[0]
 NODE	[81]	VALUE	[0]
 NODE	[82]	VALUE	[0]
 NODE	[83]	VALUE	[0]
-NODE	[84]	VALUE	[0]	TIME[180ms]
+NODE	[84]	VALUE	[0]
 NODE	[85]	VALUE	[0]
 NODE	[86]	VALUE	[0]
 NODE	[87]	VALUE	[0]

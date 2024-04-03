@@ -1,4 +1,5 @@
-Time for first process to decide: 21ms
+**************[CONCURRENCY ERREOR]*************
+Time for first process to decide: 29ms
 **************[PARAM INFO]************
 N = 10
 LEADER_ELECTION_TIMEOUT = 100
@@ -7,13 +8,13 @@ CRASH_PROBABILITY = 0
 BOUND_OF_PROPOSED_NUMBER = 2
 ABORT_TIMEOUT = 100
 **************[NODE INFO]*************
-NODE	[1]	VALUE	[1]	TIME[21ms]
-NODE	[2]	VALUE	[1]
-NODE	[3]	VALUE	[1]
-NODE	[4]	VALUE	[1]
-NODE	[5]	VALUE	[1]
-NODE	[6]	VALUE	[1]	TIME[24ms]
-NODE	[7]	VALUE	[1]	TIME[26ms]
-NODE	[8]	VALUE	[1]
-NODE	[9]	VALUE	[1]
-NODE	[10]	VALUE	[1]
+NODE	[1]	VALUE	[0]	<------------------ uncheck
+NODE	[2]	VALUE	[0]	<------------------ uncheck
+NODE	[3]	VALUE	[0]	<------------------ uncheck
+NODE	[4]	VALUE	[0]	<------------------ uncheck
+NODE	[5]	VALUE	[0]	<------------------ uncheck
+NODE	[6]	VALUE	[0]	<------------------ uncheck
+NODE	[7]	VALUE	[0]	<------------------ uncheck
+NODE	[8]	VALUE	[0]	<------------------ uncheck
+NODE	[9]	VALUE	[0]	<------------------ uncheck
+NODE	[10]	VALUE	[0]	<------------------ uncheck
