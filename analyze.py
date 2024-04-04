@@ -21,11 +21,8 @@ for filename in os.listdir(summary_path):
                 if result_match:
                     TT = float(result_match.group(1))
                     results[(N, f, a, tle)] = TT
-
-# for key, value in results.items():
-#     print(f'N={key[0]}, f={key[1]}, a={key[2]}, tle={key[3]}: {value}ms')
-                    
-# 保存results字典中的数据
+                 
+# save data 
 import pickle
 from datetime import datetime
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
